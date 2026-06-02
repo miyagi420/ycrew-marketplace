@@ -83,6 +83,15 @@ export default function SignUp() {
           <Text className="flex-1 text-sm text-navy-100">{t('auth.ageConfirm')}</Text>
         </Pressable>
 
+        <View className="mb-4 flex-row gap-4">
+          <Link href="/legal/terms" className="text-xs text-gold-300">
+            {t('legal.terms')}
+          </Link>
+          <Link href="/legal/privacy" className="text-xs text-gold-300">
+            {t('legal.privacy')}
+          </Link>
+        </View>
+
         <ErrorText>{error}</ErrorText>
         <Button title={t('auth.createAccount')} onPress={onSubmit} loading={busy} />
 

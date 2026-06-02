@@ -50,13 +50,18 @@ export default function OwnerHome() {
     <View className="flex-1 bg-navy-900" style={{ paddingTop: insets.top + 12 }}>
       <View className="flex-row items-center justify-between px-5 pb-3">
         <Text className="text-2xl font-semibold text-white">{t('owner.jobs')}</Text>
-        <Pressable
-          onPress={async () => {
-            await signOut();
-            router.replace('/');
-          }}>
-          <Text className="text-sm text-navy-100">{t('common.signOut')}</Text>
-        </Pressable>
+        <View className="flex-row gap-3">
+          <Pressable onPress={() => router.push('/account')}>
+            <Text className="text-sm text-gold-300">{t('common.account')}</Text>
+          </Pressable>
+          <Pressable
+            onPress={async () => {
+              await signOut();
+              router.replace('/');
+            }}>
+            <Text className="text-sm text-navy-100">{t('common.signOut')}</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView

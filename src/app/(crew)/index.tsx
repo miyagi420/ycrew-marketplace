@@ -52,6 +52,9 @@ export default function CrewHome() {
           <Pressable onPress={() => router.push('/(crew)/profile')}>
             <Text className="text-sm text-gold-300">{t('crew.profile')}</Text>
           </Pressable>
+          <Pressable onPress={() => router.push('/account')}>
+            <Text className="text-sm text-gold-300">{t('common.account')}</Text>
+          </Pressable>
           <Pressable
             onPress={async () => {
               await signOut();
