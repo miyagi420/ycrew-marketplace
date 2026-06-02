@@ -5,18 +5,8 @@
       "args": ["/c", "npx", "-y", "@upstash/context7-mcp"]
     },
     "supabase": {
-      "command": "cmd",
-      "args": [
-        "/c",
-        "npx",
-        "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--read-only",
-        "--project-ref=${SUPABASE_PROJECT_REF}"
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
-      }
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=evkkaxqshyrfguhjqfpc&features=account%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cstorage%2Cbranching"
     }
   }
 }
