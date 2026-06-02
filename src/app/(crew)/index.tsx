@@ -6,23 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Card, Pill } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
-import {
-  calculateMatchScore,
-  type CrewForMatch,
-  type JobForMatch,
-  matchTier,
-} from '@/lib/matching';
+import { getRankedJobsForCrew, type RankedJob } from '@/lib/match-service';
+import { matchTier } from '@/lib/matching';
 import { supabase } from '@/lib/supabase';
-
-type RankedJob = {
-  id: string;
-  title: string;
-  role: string;
-  day_rate: number | null;
-  currency: string;
-  score: number;
-  reasons: string[];
-};
 
 export default function CrewHome() {
   const { t } = useTranslation();
@@ -37,43 +23,11 @@ export default function CrewHome() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [{ data: profile }, { data: jobs }, { data: apps }] = await Promise.all([
-      supabase.from('crew_profiles').select('*, certifications(type)').eq('user_id', uid).maybeSingle(),
-      supabase.from('jobs').select('*').eq('status', 'OPEN'),
+    const [jobs, { data: apps }] = await Promise.all([
+      getRankedJobsForCrew(uid),
       supabase.from('applications').select('job_id').eq('crew_user_id', uid),
     ]);
-
-    const vesselIds = (jobs ?? []).map((j) => j.vessel_id).filter((v): v is string => !!v);
-    const vesselMap = new Map<string, string | null>();
-    if (vesselIds.length) {
-      const { data: vessels } = await supabase.from('vessels').select('id, type').in('id', vesselIds);
-      (vessels ?? []).forEach((v) => vesselMap.set(v.id, v.type));
-    }
-
-    const crew = (profile ?? {}) as unknown as CrewForMatch;
-    const out: RankedJob[] = (jobs ?? []).map((j) => {
-      const forMatch: JobForMatch = {
-        role: j.role,
-        requires_cert_types: j.requires_cert_types,
-        min_exp_months: j.min_exp_months,
-        start_date: j.start_date,
-        itinerary: j.itinerary,
-        vessel: j.vessel_id ? { type: vesselMap.get(j.vessel_id) ?? null } : null,
-      };
-      const { score, reasons } = calculateMatchScore(crew, forMatch);
-      return {
-        id: j.id,
-        title: j.title,
-        role: j.role,
-        day_rate: j.day_rate,
-        currency: j.currency,
-        score,
-        reasons,
-      };
-    });
-    out.sort((a, b) => b.score - a.score);
-
-    setRanked(out);
+    setRanked(jobs);
     setApplied(new Set((apps ?? []).map((a) => a.job_id)));
     setLoading(false);
   }, [uid]);
@@ -92,6 +46,9 @@ export default function CrewHome() {
       <View className="flex-row items-center justify-between px-5 pb-3">
         <Text className="text-2xl font-semibold text-white">{t('crew.matches')}</Text>
         <View className="flex-row gap-3">
+          <Pressable onPress={() => router.push('/(crew)/applications')}>
+            <Text className="text-sm text-gold-300">{t('crew.myApplications')}</Text>
+          </Pressable>
           <Pressable onPress={() => router.push('/(crew)/profile')}>
             <Text className="text-sm text-gold-300">{t('crew.profile')}</Text>
           </Pressable>

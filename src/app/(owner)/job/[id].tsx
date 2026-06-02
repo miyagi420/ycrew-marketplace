@@ -5,22 +5,9 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card, Pill } from '@/components/ui';
-import {
-  calculateMatchScore,
-  type CrewForMatch,
-  type JobForMatch,
-  matchTier,
-} from '@/lib/matching';
+import { type Candidate, getCandidatesForJob } from '@/lib/match-service';
+import { matchTier } from '@/lib/matching';
 import { supabase } from '@/lib/supabase';
-
-type Candidate = {
-  userId: string;
-  name: string;
-  role: string;
-  score: number;
-  reasons: string[];
-  appliedStatus: string | null;
-};
 
 export default function JobCandidates() {
   const { t } = useTranslation();
@@ -35,47 +22,12 @@ export default function JobCandidates() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data: job } = await supabase.from('jobs').select('*').eq('id', id).maybeSingle();
-      if (!job) {
-        setLoading(false);
-        return;
-      }
-      setJobTitle(job.title);
-
-      let vesselType: string | null = null;
-      if (job.vessel_id) {
-        const { data: v } = await supabase.from('vessels').select('type').eq('id', job.vessel_id).maybeSingle();
-        vesselType = v?.type ?? null;
-      }
-      const forMatch: JobForMatch = {
-        role: job.role,
-        requires_cert_types: job.requires_cert_types,
-        min_exp_months: job.min_exp_months,
-        start_date: job.start_date,
-        itinerary: job.itinerary,
-        vessel: vesselType ? { type: vesselType } : null,
-      };
-
-      const [{ data: crews }, { data: apps }] = await Promise.all([
-        supabase.from('crew_profiles').select('*, certifications(type)'),
-        supabase.from('applications').select('crew_user_id, status').eq('job_id', id),
+      const [{ data: job }, cands] = await Promise.all([
+        supabase.from('jobs').select('title').eq('id', id).maybeSingle(),
+        getCandidatesForJob(id),
       ]);
-      const appMap = new Map<string, string>();
-      (apps ?? []).forEach((a) => appMap.set(a.crew_user_id, a.status));
-
-      const out: Candidate[] = (crews ?? []).map((c) => {
-        const { score, reasons } = calculateMatchScore(c as unknown as CrewForMatch, forMatch);
-        return {
-          userId: c.user_id,
-          name: c.name || 'Crew member',
-          role: c.primary_role || '—',
-          score,
-          reasons,
-          appliedStatus: appMap.get(c.user_id) ?? null,
-        };
-      });
-      out.sort((a, b) => b.score - a.score);
-      setCandidates(out);
+      setJobTitle(job?.title ?? '');
+      setCandidates(cands);
       setLoading(false);
     })();
   }, [id]);
