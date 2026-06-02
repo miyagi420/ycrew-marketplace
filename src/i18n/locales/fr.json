@@ -5,6 +5,8 @@
     "subtitle": "Équipage vérifié. Postes contrôlés. La poignée de main, assurée.",
     "ctaCrew": "Trouver un poste",
     "ctaOwner": "Recruter un équipage",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "signIn": "Se connecter",
     "backendConnected": "Backend connecté",
     "backendPending": "Backend non configuré"
   }
