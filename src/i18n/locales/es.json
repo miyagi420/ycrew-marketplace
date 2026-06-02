@@ -1,0 +1,11 @@
+{
+  "landing": {
+    "brand": "YachtCrew",
+    "tagline": "Donde se encuentran yates y tripulación.",
+    "subtitle": "Tripulación verificada. Puestos validados. El apretón de manos, resuelto.",
+    "ctaCrew": "Buscar trabajo",
+    "ctaOwner": "Contratar tripulación",
+    "backendConnected": "Backend conectado",
+    "backendPending": "Backend sin configurar"
+  }
+}
