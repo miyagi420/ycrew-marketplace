@@ -45,7 +45,10 @@
     "availFrom": "Available from (YYYY-MM-DD)",
     "availTo": "Available to (YYYY-MM-DD)",
     "addCert": "Add certification (e.g. STCW)",
-    "certs": "Certifications"
+    "certs": "Certifications",
+    "myApplications": "Applications",
+    "applicationsTitle": "Your applications",
+    "noApplications": "You haven't applied to any roles yet."
   },
   "owner": {
     "jobs": "Your jobs",
