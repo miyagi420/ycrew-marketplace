@@ -1,28 +1,28 @@
+import { Redirect, useRouter } from 'expo-router';
 import { MotiView } from 'moti';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { isSupabaseConfigured } from '@/lib/env';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/auth';
 
-export default function Landing() {
+export default function Index() {
   const { t } = useTranslation();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [connected, setConnected] = useState(false);
+  const { session, role, loading } = useAuth();
 
-  // Foundation slice: prove the client -> Supabase path is live once configured.
-  useEffect(() => {
-    if (!isSupabaseConfigured) return;
-    let active = true;
-    supabase.auth.getSession().then(({ error }) => {
-      if (active && !error) setConnected(true);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-navy-900">
+        <ActivityIndicator color="#DBBC76" />
+      </View>
+    );
+  }
+
+  if (session) {
+    return <Redirect href={role === 'OWNER' || role === 'AGENCY' ? '/(owner)' : '/(crew)'} />;
+  }
 
   return (
     <View
@@ -44,26 +44,24 @@ export default function Landing() {
         </Text>
 
         <View className="gap-3">
-          <Pressable className="items-center rounded-2xl bg-gold-400 py-4 active:opacity-80">
+          <Pressable
+            onPress={() => router.push('/(auth)/sign-up?role=CREW')}
+            className="items-center rounded-2xl bg-gold-400 py-4 active:opacity-80">
             <Text className="text-base font-semibold text-navy-900">{t('landing.ctaCrew')}</Text>
           </Pressable>
-          <Pressable className="items-center rounded-2xl border border-gold-400/40 py-4 active:opacity-70">
+          <Pressable
+            onPress={() => router.push('/(auth)/sign-up?role=OWNER')}
+            className="items-center rounded-2xl border border-gold-400/40 py-4 active:opacity-70">
             <Text className="text-base font-semibold text-gold-200">{t('landing.ctaOwner')}</Text>
           </Pressable>
         </View>
       </MotiView>
 
-      <View className="items-center">
-        <View
-          className={`flex-row items-center gap-2 rounded-full px-3 py-1.5 ${
-            connected ? 'bg-emerald-500/15' : 'bg-white/10'
-          }`}>
-          <View className={`h-2 w-2 rounded-full ${connected ? 'bg-emerald-400' : 'bg-gold-400'}`} />
-          <Text className="text-xs text-navy-100">
-            {connected ? t('landing.backendConnected') : t('landing.backendPending')}
-          </Text>
-        </View>
-      </View>
+      <Pressable onPress={() => router.push('/(auth)/sign-in')} className="items-center py-2">
+        <Text className="text-sm text-navy-100">
+          {t('landing.haveAccount')} <Text className="text-gold-300">{t('landing.signIn')}</Text>
+        </Text>
+      </Pressable>
     </View>
   );
 }
