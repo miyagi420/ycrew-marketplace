@@ -388,6 +388,51 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          body: string
+          id: string
+          read_at: string | null
+          receiver_id: string
+          sender_id: string
+          sent_at: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          id?: string
+          read_at?: string | null
+          receiver_id: string
+          sender_id: string
+          sent_at?: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          id?: string
+          read_at?: string | null
+          receiver_id?: string
+          sender_id?: string
+          sent_at?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       owner_org_members: {
         Row: {
           created_at: string
@@ -660,6 +705,7 @@ export type Database = {
       }
       is_org_member: { Args: { p_org: string }; Returns: boolean }
       is_owner_role: { Args: never; Returns: boolean }
+      job_owner: { Args: { p_job: string }; Returns: string }
     }
     Enums: {
       application_status:

@@ -82,7 +82,14 @@
     "back": "Back",
     "loading": "Loading...",
     "score": "match",
-    "account": "Account"
+    "account": "Account",
+    "message": "Message"
+  },
+  "chat": {
+    "title": "Messages",
+    "placeholder": "Write a message…",
+    "send": "Send",
+    "empty": "No messages yet. Say hello."
   },
   "account": {
     "title": "Account & privacy",
