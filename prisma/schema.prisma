@@ -1,0 +1,345 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [postgis, vector]
+}
+
+enum Role {
+  CREW
+  OWNER
+  AGENCY
+  ADMIN
+}
+
+enum JobStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  FILLED
+  ARCHIVED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+  ACCEPTED
+}
+
+enum ContractType {
+  DAY
+  SEASONAL
+  PERMANENT
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  ELITE
+  AGENCY
+  ENTERPRISE
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  crewProfile   CrewProfile?
+  ownerOrgs     OwnerOrgMember[]
+  sentMessages  Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  applications  Application[]
+  reviewsGiven  Review[] @relation("ReviewsGiven")
+  reviewsReceived Review[] @relation("ReviewsReceived")
+  subscription  Subscription?
+  verification  Verification?
+  auditLogs     AuditLog[]
+}
+
+model CrewProfile {
+  userId              String   @id
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name                String
+  nationality         String?
+  languages           String[]
+  homeport            String?
+  willingnessToTravel Boolean  @default(true)
+  
+  minDayRate          Float?
+  minMonthly          Float?
+  currency            String   @default("EUR")
+  
+  experienceMonths    Int      @default(0)
+  primaryRole         String
+  secondaryRoles      String[]
+  
+  boatTypes           String[]
+  boatLengthMin       Int?
+  boatLengthMax       Int?
+  
+  availabilityStart   DateTime?
+  availabilityEnd     DateTime?
+  
+  bio                 String?
+  photoUrl            String?
+  cvUrl               String?
+  
+  profileCompleteness Int      @default(0)
+  
+  certifications      Certification[]
+  availabilities      Availability[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model OwnerOrg {
+  id              String   @id @default(uuid())
+  name            String
+  type            String   // owner, agency
+  billingEmail    String?
+  
+  members         OwnerOrgMember[]
+  vessels         Vessel[]
+  jobs            Job[]
+  subscription    Subscription?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OwnerOrgMember {
+  id        String   @id @default(uuid())
+  orgId     String
+  userId    String
+  role      String   @default("member") // owner, admin, member
+  
+  org       OwnerOrg @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([orgId, userId])
+}
+
+model Vessel {
+  id          String   @id @default(uuid())
+  ownerOrgId  String
+  ownerOrg    OwnerOrg @relation(fields: [ownerOrgId], references: [id], onDelete: Cascade)
+  
+  name        String
+  type        String   // motor, sail, catamaran, etc.
+  flagState   String?
+  lengthM     Float?
+  buildYear   Int?
+  homeport    String?
+  mmsi        String?
+  notes       String?
+  
+  jobs        Job[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Job {
+  id              String      @id @default(uuid())
+  ownerOrgId      String
+  ownerOrg        OwnerOrg    @relation(fields: [ownerOrgId], references: [id], onDelete: Cascade)
+  vesselId        String?
+  vessel          Vessel?     @relation(fields: [vesselId], references: [id], onDelete: SetNull)
+  
+  title           String
+  role            String
+  contractType    ContractType
+  
+  startDate       DateTime
+  durationDays    Int?
+  
+  itinerary       String?
+  itineraryGeoJson String?    // JSON string for geographic data
+  
+  requiresCertTypes String[]
+  minExpMonths    Int?
+  
+  dayRate         Float?
+  monthlyRate     Float?
+  currency        String      @default("EUR")
+  
+  accommodation   String?
+  description     String?
+  
+  status          JobStatus   @default("DRAFT")
+  
+  applications    Application[]
+  matches         Match[]
+  
+  postedAt        DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Certification {
+  id          String   @id @default(uuid())
+  crewUserId  String
+  crew        CrewProfile @relation(fields: [crewUserId], references: [userId], onDelete: Cascade)
+  
+  type        String   // STCW, ENG1, CoC, etc.
+  number      String?
+  issuer      String?
+  issueDate   DateTime?
+  expiryDate  DateTime?
+  docUrl      String?
+  verified    Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Application {
+  id            String            @id @default(uuid())
+  jobId         String
+  job           Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  crewUserId    String
+  crew          User              @relation(fields: [crewUserId], references: [id], onDelete: Cascade)
+  
+  status        ApplicationStatus @default(APPLIED)
+  coverText     String?
+  expectedRate  Float?
+  
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  @@unique([jobId, crewUserId])
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  crewUserId  String
+  
+  score       Float
+  reasons     String   // JSON string
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([jobId, crewUserId])
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  threadId    String
+  senderId    String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId  String
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  body        String
+  sentAt      DateTime @default(now())
+  readAt      DateTime?
+}
+
+model Availability {
+  id          String      @id @default(uuid())
+  crewUserId  String
+  crew        CrewProfile @relation(fields: [crewUserId], references: [userId], onDelete: Cascade)
+  
+  start       DateTime
+  end         DateTime
+  location    String?
+  notes       String?
+  
+  createdAt   DateTime    @default(now())
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  reviewerId    String
+  reviewer      User     @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  subjectId     String
+  subject       User     @relation("ReviewsReceived", fields: [subjectId], references: [id], onDelete: Cascade)
+  
+  role          String
+  rating        Int
+  text          String?
+  voyageStart   DateTime?
+  voyageEnd     DateTime?
+  
+  createdAt     DateTime @default(now())
+}
+
+model Subscription {
+  id            String           @id @default(uuid())
+  userId        String?          @unique
+  user          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgId         String?          @unique
+  org           OwnerOrg?        @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  plan          SubscriptionPlan
+  status        String           @default("active")
+  renewalDate   DateTime?
+  stripeSubId   String?          @unique
+  
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model Verification {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  kycStatus       String   @default("pending") // pending, approved, rejected
+  kycProvider     String?
+  kycProviderId   String?
+  
+  lastReviewedAt  DateTime?
+  reviewedBy      String?
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Attachment {
+  id          String   @id @default(uuid())
+  ownerId     String
+  type        String
+  url         String
+  filename    String?
+  metadata    String?  // JSON string
+  
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  
+  action      String
+  entity      String
+  entityId    String?
+  diff        String?  // JSON string
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([entity, entityId])
+  @@index([actorId])
+}
