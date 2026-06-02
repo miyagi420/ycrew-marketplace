@@ -2,7 +2,8 @@
 
 Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
-> Prerequisite: this repo is not yet a git repository with a GitHub remote. Before these commands work, run `git init`, create the GitHub repo (e.g. `gh repo create`), commit, and push.
+> Repo: `miyagi420/ycrew-marketplace` (remote `origin`, default working branch `develop`).
+> Prerequisite: install the GitHub CLI (`gh`) and authenticate with `gh auth login` before these commands work.
 
 ## Conventions
 

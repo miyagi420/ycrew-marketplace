@@ -6,9 +6,9 @@ Yacht Crew Marketplace — a two-sided Next.js + Prisma marketplace connecting y
 
 ### Issue tracker
 
-Issues and PRDs live as **GitHub issues**, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues and PRDs live as **GitHub issues** in `miyagi420/ycrew-marketplace`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
-> Note: this repo is not yet a git repository with a GitHub remote. Run `git init`, create a GitHub repo, and push before the `gh`-based skills (`to-issues`, `triage`, `to-prd`) will work.
+> Prerequisite: install the GitHub CLI (`gh`) and run `gh auth login` before the `gh`-based skills (`to-issues`, `triage`, `to-prd`) will work.
 
 ### Triage labels
 
