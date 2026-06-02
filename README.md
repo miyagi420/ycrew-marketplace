@@ -1,56 +1,60 @@
-# Welcome to your Expo app 👋
+# YachtCrew — Yacht Crew Marketplace
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A two-sided marketplace connecting yacht/maritime employers with crew. Crew
+build verified profiles and apply to jobs; owners post jobs and review ranked
+candidates; both sides chat in realtime. Cross-platform: **iOS, Android, and
+web** from one Expo codebase, backed by Supabase.
 
-## Get started
+> `YachtCrew` is a working title — pick a trademark-clear brand before store
+> submission.
 
-1. Install dependencies
+## Stack
 
-   ```bash
-   npm install
-   ```
+- **App**: Expo (React Native + Expo Router), NativeWind, i18n (EN/FR/IT/ES)
+- **Backend**: Supabase (Postgres + RLS, Auth, Realtime, Edge Functions)
+- **Matching**: deterministic scorer in a Supabase Edge Function (+ client fallback)
+- **Payments** (scaffolded): RevenueCat — Apple IAP / Google Play / Stripe web
+- **Tests**: Node contract tests + Playwright E2E, run in CI on every PR
 
-2. Start the app
+## Quick start (local)
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Prerequisites: Node 20+, Docker Desktop (for local Supabase).
 
 ```bash
-npm run reset-project
+npm install
+npx supabase start          # local Postgres + Auth + Storage + Realtime
+npm run seed                # demo data + 11 RLS assertions
+npm run web                 # open the app (http://localhost:8081)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Demo logins (password `Passw0rd!`): `crew@demo.test`, `owner@demo.test`.
 
-### Other setup steps
+Run on a device: `npm run ios` / `npm run android` (Expo).
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Scripts
 
-## Learn more
+| Script | Does |
+|---|---|
+| `npm run web` / `ios` / `android` | Run the app |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Node contract tests (matching) |
+| `npm run e2e` | Playwright end-to-end (needs `dist/` + local Supabase) |
+| `npm run db:start` / `db:stop` / `db:reset` | Local Supabase stack |
+| `npm run seed` | Seed demo data + RLS checks |
+| `npm run web:build` | Export the web build to `dist/` |
+| `npm run db:push` / `functions:deploy` | Push schema / deploy edge functions to cloud |
+| `npm run build:android` / `build:ios` | EAS native builds |
 
-To learn more about developing your project with Expo, look at the following resources:
+## Deploying / trying it beyond local
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+See **[docs/DEPLOY.md](docs/DEPLOY.md)** — a step-by-step runbook to deploy with
+free accounts: cloud Supabase → public web URL (Vercel) → Android preview APK
+(EAS). iOS and the app stores come later (paid developer accounts).
 
-## Join the community
+## Project docs
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [docs/PRD.md](docs/PRD.md) — product decisions + build order
+- [docs/prd-vertical-slice.md](docs/prd-vertical-slice.md) — the slice PRD (issue #1)
+- [docs/adr/0001-cross-platform-expo-supabase.md](docs/adr/0001-cross-platform-expo-supabase.md) — stack decision
+- [development-plan.md](development-plan.md) — full product blueprint
+- `reference/legacy-next/` — the original Next.js mockup, kept as design reference
