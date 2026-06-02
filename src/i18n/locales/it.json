@@ -1,0 +1,11 @@
+{
+  "landing": {
+    "brand": "YachtCrew",
+    "tagline": "Dove yacht ed equipaggio si incontrano.",
+    "subtitle": "Equipaggio verificato. Ruoli selezionati. La stretta di mano, gestita.",
+    "ctaCrew": "Trova lavoro",
+    "ctaOwner": "Assumi equipaggio",
+    "backendConnected": "Backend connesso",
+    "backendPending": "Backend non configurato"
+  }
+}

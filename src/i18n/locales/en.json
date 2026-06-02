@@ -1,0 +1,11 @@
+{
+  "landing": {
+    "brand": "YachtCrew",
+    "tagline": "Where yachts and crew meet.",
+    "subtitle": "Verified crew. Vetted roles. The handshake, handled.",
+    "ctaCrew": "Find work",
+    "ctaOwner": "Hire crew",
+    "backendConnected": "Backend connected",
+    "backendPending": "Backend not configured"
+  }
+}
