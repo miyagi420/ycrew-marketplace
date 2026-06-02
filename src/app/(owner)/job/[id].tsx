@@ -98,6 +98,9 @@ export default function JobCandidates() {
           • {r}
         </Text>
       ))}
+      <Pressable onPress={() => router.push(`/chat/${c.userId}`)} className="mt-3 self-start">
+        <Text className="text-sm text-gold-300">{t('common.message')} ›</Text>
+      </Pressable>
       {withActions && c.appliedStatus ? (
         <View className="mt-3 flex-row flex-wrap gap-2">
           {nextActions(c.appliedStatus).map((a) => (

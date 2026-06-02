@@ -12,6 +12,7 @@ type AppRow = {
   id: string;
   status: string;
   created_at: string;
+  job_id: string;
   job: { title: string; role: string } | null;
 };
 
@@ -29,13 +30,18 @@ export default function CrewApplications() {
     (async () => {
       const { data } = await supabase
         .from('applications')
-        .select('id, status, created_at, job:jobs(title, role)')
+        .select('id, status, created_at, job_id, job:jobs(title, role)')
         .eq('crew_user_id', uid)
         .order('created_at', { ascending: false });
       setRows((data ?? []) as unknown as AppRow[]);
       setLoading(false);
     })();
   }, [uid]);
+
+  const message = async (jobId: string) => {
+    const { data } = await supabase.rpc('job_owner', { p_job: jobId });
+    if (data) router.push(`/chat/${data}`);
+  };
 
   const tone = (status: string) =>
     status === 'ACCEPTED' || status === 'OFFER'
@@ -67,6 +73,9 @@ export default function CrewApplications() {
               </View>
               <Pill tone={tone(a.status)}>{a.status}</Pill>
             </View>
+            <Pressable onPress={() => message(a.job_id)} className="mt-3 self-start">
+              <Text className="text-sm text-gold-300">{t('common.message')} ›</Text>
+            </Pressable>
           </Card>
         ))}
       </ScrollView>
