@@ -5,6 +5,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { Button, Card, ErrorText, Field, H1, Pill, Screen } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { certStatus } from '@/lib/certs';
 import { supabase } from '@/lib/supabase';
 
 const csv = (s: string) =>
@@ -28,13 +29,17 @@ export default function CrewProfile() {
   const [availFrom, setAvailFrom] = useState('');
   const [availTo, setAvailTo] = useState('');
   const [certType, setCertType] = useState('');
-  const [certs, setCerts] = useState<{ id: string; type: string }[]>([]);
+  const [certExpiry, setCertExpiry] = useState('');
+  const [certs, setCerts] = useState<{ id: string; type: string; expiry_date: string | null }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const loadCerts = async () => {
-    const { data } = await supabase.from('certifications').select('id, type').eq('crew_user_id', uid);
+    const { data } = await supabase
+      .from('certifications')
+      .select('id, type, expiry_date')
+      .eq('crew_user_id', uid);
     setCerts(data ?? []);
   };
 
@@ -81,8 +86,13 @@ export default function CrewProfile() {
 
   const addCert = async () => {
     if (!certType.trim()) return;
-    await supabase.from('certifications').insert({ crew_user_id: uid, type: certType.trim().toUpperCase() });
+    await supabase.from('certifications').insert({
+      crew_user_id: uid,
+      type: certType.trim().toUpperCase(),
+      expiry_date: certExpiry.trim() || null,
+    });
     setCertType('');
+    setCertExpiry('');
     await loadCerts();
   };
 
@@ -127,14 +137,39 @@ export default function CrewProfile() {
         {certs.length === 0 ? (
           <Text className="text-sm text-navy-100">—</Text>
         ) : (
-          <View className="flex-row flex-wrap gap-2">
-            {certs.map((c) => (
-              <Pill key={c.id}>{c.type}</Pill>
-            ))}
+          <View className="gap-2">
+            {certs.map((c) => {
+              const s = certStatus(c.expiry_date);
+              const tone =
+                s === 'expired'
+                  ? 'bg-red-500/15 text-red-300'
+                  : s === 'expiring'
+                    ? 'bg-amber-500/15 text-amber-300'
+                    : s === 'valid'
+                      ? 'bg-emerald-500/15 text-emerald-300'
+                      : 'bg-white/10 text-navy-100';
+              return (
+                <View key={c.id} className="flex-row items-center justify-between">
+                  <Text className="text-sm font-medium text-white">{c.type}</Text>
+                  {s === 'none' ? null : (
+                    <View className={`rounded-full px-2.5 py-1 ${tone.split(' ')[0]}`}>
+                      <Text className={`text-xs ${tone.split(' ')[1]}`}>{t(`certStatus.${s}`)}</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
           </View>
         )}
       </Card>
       <Field label={t('crew.addCert')} value={certType} onChangeText={setCertType} autoCapitalize="characters" />
+      <Field
+        label={t('crew.certExpiry')}
+        value={certExpiry}
+        onChangeText={setCertExpiry}
+        autoCapitalize="none"
+        placeholder="2027-01-31"
+      />
       <Button title="+" variant="outline" onPress={addCert} />
     </Screen>
   );

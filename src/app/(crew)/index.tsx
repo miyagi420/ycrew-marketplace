@@ -6,8 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Card, Pill } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { expiringCertCount } from '@/lib/certs';
 import { getRankedJobsForCrew, type RankedJob } from '@/lib/match-service';
 import { matchTier } from '@/lib/matching';
+import { getUnreadCount } from '@/lib/messages';
 import { supabase } from '@/lib/supabase';
 
 export default function CrewHome() {
@@ -19,16 +21,22 @@ export default function CrewHome() {
 
   const [ranked, setRanked] = useState<RankedJob[]>([]);
   const [applied, setApplied] = useState<Set<string>>(new Set());
+  const [unread, setUnread] = useState(0);
+  const [expiring, setExpiring] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [jobs, { data: apps }] = await Promise.all([
+    const [jobs, { data: apps }, unreadCount, expiringCount] = await Promise.all([
       getRankedJobsForCrew(uid),
       supabase.from('applications').select('job_id').eq('crew_user_id', uid),
+      getUnreadCount(uid),
+      expiringCertCount(uid),
     ]);
     setRanked(jobs);
     setApplied(new Set((apps ?? []).map((a) => a.job_id)));
+    setUnread(unreadCount);
+    setExpiring(expiringCount);
     setLoading(false);
   }, [uid]);
 
@@ -41,20 +49,26 @@ export default function CrewHome() {
     if (!error) setApplied((prev) => new Set(prev).add(jobId));
   };
 
+  const NavLink = ({ label, onPress, badge }: { label: string; onPress: () => void; badge?: number }) => (
+    <Pressable onPress={onPress} className="flex-row items-center gap-1">
+      <Text className="text-sm text-gold-300">{label}</Text>
+      {badge ? (
+        <View className="rounded-full bg-gold-400 px-1.5">
+          <Text className="text-xs font-semibold text-navy-900">{badge}</Text>
+        </View>
+      ) : null}
+    </Pressable>
+  );
+
   return (
     <View className="flex-1 bg-navy-900" style={{ paddingTop: insets.top + 12 }}>
-      <View className="flex-row items-center justify-between px-5 pb-3">
-        <Text className="text-2xl font-semibold text-white">{t('crew.matches')}</Text>
-        <View className="flex-row gap-3">
-          <Pressable onPress={() => router.push('/(crew)/applications')}>
-            <Text className="text-sm text-gold-300">{t('crew.myApplications')}</Text>
-          </Pressable>
-          <Pressable testID="nav-profile" onPress={() => router.push('/(crew)/profile')}>
-            <Text className="text-sm text-gold-300">{t('crew.profile')}</Text>
-          </Pressable>
-          <Pressable onPress={() => router.push('/account')}>
-            <Text className="text-sm text-gold-300">{t('common.account')}</Text>
-          </Pressable>
+      <View className="px-5 pb-3">
+        <Text className="mb-2 text-2xl font-semibold text-white">{t('crew.matches')}</Text>
+        <View className="flex-row flex-wrap gap-x-4 gap-y-1">
+          <NavLink label={t('crew.myApplications')} onPress={() => router.push('/(crew)/applications')} />
+          <NavLink label={t('inbox.title')} onPress={() => router.push('/messages')} badge={unread} />
+          <NavLink label={t('crew.profile')} onPress={() => router.push('/(crew)/profile')} />
+          <NavLink label={t('common.account')} onPress={() => router.push('/account')} />
           <Pressable
             onPress={async () => {
               await signOut();
@@ -68,6 +82,19 @@ export default function CrewHome() {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 24 }}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} tintColor="#DBBC76" />}>
+        {expiring > 0 ? (
+          <Pressable onPress={() => router.push('/(crew)/profile')}>
+            <View className="mb-4 flex-row items-center justify-between rounded-2xl border border-amber-400/40 bg-amber-500/10 px-4 py-3">
+              <Text className="flex-1 pr-2 text-sm text-amber-200">
+                {expiring === 1
+                  ? t('certStatus.bannerOne')
+                  : t('certStatus.bannerMany', { count: expiring })}
+              </Text>
+              <Text className="text-sm font-semibold text-amber-200">{t('certStatus.review')} ›</Text>
+            </View>
+          </Pressable>
+        ) : null}
+
         <Text className="mb-4 text-sm text-navy-100">{t('crew.matchesSub')}</Text>
 
         {ranked.length === 0 && !loading ? (

@@ -45,6 +45,7 @@
     "availFrom": "Available from (YYYY-MM-DD)",
     "availTo": "Available to (YYYY-MM-DD)",
     "addCert": "Add certification (e.g. STCW)",
+    "certExpiry": "Expiry date (YYYY-MM-DD, optional)",
     "certs": "Certifications",
     "myApplications": "Applications",
     "applicationsTitle": "Your applications",
@@ -90,6 +91,19 @@
     "placeholder": "Write a message…",
     "send": "Send",
     "empty": "No messages yet. Say hello."
+  },
+  "inbox": {
+    "title": "Messages",
+    "empty": "No conversations yet.",
+    "conversation": "Conversation"
+  },
+  "certStatus": {
+    "valid": "Valid",
+    "expiring": "Expiring soon",
+    "expired": "Expired",
+    "bannerOne": "1 certification needs attention",
+    "bannerMany": "{{count}} certifications need attention",
+    "review": "Review"
   },
   "account": {
     "title": "Account & privacy",
