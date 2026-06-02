@@ -39,6 +39,7 @@ export default function SignUp() {
 
   const Chip = ({ value, label }: { value: AppRole; label: string }) => (
     <Pressable
+      testID={`role-${value}`}
       onPress={() => setRole(value)}
       className={`flex-1 items-center rounded-xl border py-3 ${
         role === value ? 'border-gold-400 bg-gold-400/15' : 'border-navy-500/40 bg-navy-800'
@@ -58,8 +59,9 @@ export default function SignUp() {
           <Chip value="OWNER" label={t('auth.asOwner')} />
         </View>
 
-        <Field label={t('auth.name')} value={name} onChangeText={setName} autoCapitalize="words" />
+        <Field testID="name" label={t('auth.name')} value={name} onChangeText={setName} autoCapitalize="words" />
         <Field
+          testID="email"
           label={t('auth.email')}
           value={email}
           onChangeText={setEmail}
@@ -67,13 +69,14 @@ export default function SignUp() {
           keyboardType="email-address"
         />
         <Field
+          testID="password"
           label={t('auth.password')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
 
-        <Pressable onPress={() => setAgeOk((v) => !v)} className="mb-5 flex-row items-center gap-3">
+        <Pressable testID="age" onPress={() => setAgeOk((v) => !v)} className="mb-5 flex-row items-center gap-3">
           <View
             className={`h-6 w-6 items-center justify-center rounded-md border ${
               ageOk ? 'border-gold-400 bg-gold-400' : 'border-navy-500/60'
@@ -93,7 +96,7 @@ export default function SignUp() {
         </View>
 
         <ErrorText>{error}</ErrorText>
-        <Button title={t('auth.createAccount')} onPress={onSubmit} loading={busy} />
+        <Button testID="submit" title={t('auth.createAccount')} onPress={onSubmit} loading={busy} />
 
         <Link href="/(auth)/sign-in" className="mt-2 text-center text-sm text-gold-300">
           {t('auth.haveAccountShort')}

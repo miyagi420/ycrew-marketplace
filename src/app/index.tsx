@@ -45,11 +45,13 @@ export default function Index() {
 
         <View className="gap-3">
           <Pressable
+            testID="cta-crew"
             onPress={() => router.push('/(auth)/sign-up?role=CREW')}
             className="items-center rounded-2xl bg-gold-400 py-4 active:opacity-80">
             <Text className="text-base font-semibold text-navy-900">{t('landing.ctaCrew')}</Text>
           </Pressable>
           <Pressable
+            testID="cta-owner"
             onPress={() => router.push('/(auth)/sign-up?role=OWNER')}
             className="items-center rounded-2xl border border-gold-400/40 py-4 active:opacity-70">
             <Text className="text-base font-semibold text-gold-200">{t('landing.ctaOwner')}</Text>

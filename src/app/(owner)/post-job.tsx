@@ -87,9 +87,10 @@ export default function PostJob() {
       <H1>{t('owner.postJob')}</H1>
       <Text className="mb-5 text-sm text-navy-100">{t('landing.subtitle')}</Text>
 
-      <Field label={t('owner.jobTitle')} value={title} onChangeText={setTitle} />
-      <Field label={t('owner.role')} value={role} onChangeText={setRole} />
+      <Field testID="job-title" label={t('owner.jobTitle')} value={title} onChangeText={setTitle} />
+      <Field testID="job-role" label={t('owner.role')} value={role} onChangeText={setRole} />
       <Field
+        testID="job-start"
         label={t('owner.startDate')}
         value={startDate}
         onChangeText={setStartDate}
@@ -101,7 +102,7 @@ export default function PostJob() {
       <Field label={t('owner.requiresCerts')} value={certs} onChangeText={setCerts} autoCapitalize="characters" />
 
       <ErrorText>{error}</ErrorText>
-      <Button title={t('owner.publishNow')} onPress={() => submit(true)} loading={busy} />
+      <Button testID="publish" title={t('owner.publishNow')} onPress={() => submit(true)} loading={busy} />
       <Button title={t('owner.saveDraft')} variant="outline" onPress={() => submit(false)} loading={busy} />
     </Screen>
   );

@@ -22,6 +22,8 @@
     "dist",
     ".expo",
     "supabase/functions",
-    "tests"
+    "tests",
+    "e2e",
+    "playwright.config.ts"
   ]
 }

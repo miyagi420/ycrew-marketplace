@@ -94,8 +94,9 @@ export default function CrewProfile() {
       <H1>{t('crew.profileTitle')}</H1>
       <View className="h-3" />
 
-      <Field label={t('crew.primaryRole')} value={primaryRole} onChangeText={setPrimaryRole} />
+      <Field testID="primary-role" label={t('crew.primaryRole')} value={primaryRole} onChangeText={setPrimaryRole} />
       <Field
+        testID="experience"
         label={t('crew.experienceMonths')}
         value={experience}
         onChangeText={setExperience}
@@ -119,7 +120,7 @@ export default function CrewProfile() {
           <Pill tone="green">{t('crew.saved')}</Pill>
         </View>
       ) : null}
-      <Button title={t('crew.save')} onPress={save} loading={busy} />
+      <Button testID="save-profile" title={t('crew.save')} onPress={save} loading={busy} />
 
       <Text className="mb-2 mt-4 text-xs uppercase tracking-wide text-gold-300">{t('crew.certs')}</Text>
       <Card>
