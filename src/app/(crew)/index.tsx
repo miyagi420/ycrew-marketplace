@@ -49,8 +49,11 @@ export default function CrewHome() {
           <Pressable onPress={() => router.push('/(crew)/applications')}>
             <Text className="text-sm text-gold-300">{t('crew.myApplications')}</Text>
           </Pressable>
-          <Pressable onPress={() => router.push('/(crew)/profile')}>
+          <Pressable testID="nav-profile" onPress={() => router.push('/(crew)/profile')}>
             <Text className="text-sm text-gold-300">{t('crew.profile')}</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push('/account')}>
+            <Text className="text-sm text-gold-300">{t('common.account')}</Text>
           </Pressable>
           <Pressable
             onPress={async () => {
@@ -96,7 +99,7 @@ export default function CrewHome() {
               {applied.has(j.id) ? (
                 <Pill tone="muted">{t('crew.applied')}</Pill>
               ) : (
-                <Button title={t('crew.apply')} onPress={() => apply(j.id)} />
+                <Button testID="apply" title={t('crew.apply')} onPress={() => apply(j.id)} />
               )}
             </View>
           </Card>

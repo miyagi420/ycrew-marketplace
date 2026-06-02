@@ -67,16 +67,19 @@ export function Button({
   variant = 'primary',
   loading = false,
   disabled = false,
+  testID,
 }: {
   title: string;
   onPress: () => void;
   variant?: 'primary' | 'outline';
   loading?: boolean;
   disabled?: boolean;
+  testID?: string;
 }) {
   const primary = variant === 'primary';
   return (
     <Pressable
+      testID={testID}
       onPress={onPress}
       disabled={disabled || loading}
       className={`mb-3 items-center rounded-2xl py-4 active:opacity-80 ${

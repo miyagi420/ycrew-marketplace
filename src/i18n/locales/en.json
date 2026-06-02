@@ -81,6 +81,23 @@
     "signOut": "Sign out",
     "back": "Back",
     "loading": "Loading...",
-    "score": "match"
+    "score": "match",
+    "account": "Account"
+  },
+  "account": {
+    "title": "Account & privacy",
+    "exportData": "Export my data",
+    "exportDesc": "Download everything we hold about you as JSON (GDPR).",
+    "exported": "Your data was prepared.",
+    "deleteAccount": "Delete my account",
+    "deleteDesc": "Permanently delete your account and all associated data. This cannot be undone.",
+    "confirmDelete": "Tap again to permanently delete",
+    "legalLinks": "Privacy Policy and Terms"
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "terms": "Terms"
   }
 }
