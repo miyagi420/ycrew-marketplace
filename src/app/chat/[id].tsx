@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/lib/auth';
+import { markThreadRead } from '@/lib/messages';
 import { supabase } from '@/lib/supabase';
 
 type Message = {
@@ -45,6 +46,7 @@ export default function Chat() {
       .order('sent_at', { ascending: true })
       .then(({ data }) => {
         if (active) setMessages((data ?? []) as Message[]);
+        void markThreadRead(me, threadId);
       });
 
     const channel = supabase
@@ -52,7 +54,11 @@ export default function Chat() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `thread_id=eq.${threadId}` },
-        (payload) => setMessages((prev) => [...prev, payload.new as Message]),
+        (payload) => {
+          const msg = payload.new as Message;
+          setMessages((prev) => [...prev, msg]);
+          if (msg.receiver_id === me) void markThreadRead(me, threadId);
+        },
       )
       .subscribe();
 

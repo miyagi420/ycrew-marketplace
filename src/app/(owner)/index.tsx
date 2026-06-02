@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Card, Pill } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { getUnreadCount } from '@/lib/messages';
 import { supabase } from '@/lib/supabase';
 
 type OwnerJob = { id: string; title: string; role: string; status: string };
@@ -18,14 +19,16 @@ export default function OwnerHome() {
   const uid = session!.user.id;
 
   const [jobs, setJobs] = useState<OwnerJob[]>([]);
+  const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data: members } = await supabase
-      .from('owner_org_members')
-      .select('org_id')
-      .eq('user_id', uid);
+    const [{ data: members }, unreadCount] = await Promise.all([
+      supabase.from('owner_org_members').select('org_id').eq('user_id', uid),
+      getUnreadCount(uid),
+    ]);
+    setUnread(unreadCount);
     const orgIds = (members ?? []).map((m) => m.org_id);
     if (orgIds.length) {
       const { data } = await supabase
@@ -50,7 +53,15 @@ export default function OwnerHome() {
     <View className="flex-1 bg-navy-900" style={{ paddingTop: insets.top + 12 }}>
       <View className="flex-row items-center justify-between px-5 pb-3">
         <Text className="text-2xl font-semibold text-white">{t('owner.jobs')}</Text>
-        <View className="flex-row gap-3">
+        <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">
+          <Pressable onPress={() => router.push('/messages')} className="flex-row items-center gap-1">
+            <Text className="text-sm text-gold-300">{t('inbox.title')}</Text>
+            {unread ? (
+              <View className="rounded-full bg-gold-400 px-1.5">
+                <Text className="text-xs font-semibold text-navy-900">{unread}</Text>
+              </View>
+            ) : null}
+          </Pressable>
           <Pressable onPress={() => router.push('/account')}>
             <Text className="text-sm text-gold-300">{t('common.account')}</Text>
           </Pressable>
