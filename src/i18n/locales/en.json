@@ -68,7 +68,14 @@
     "publishNow": "Publish now",
     "saveDraft": "Save as draft",
     "created": "Job created",
-    "noCandidates": "No matching candidates yet."
+    "noCandidates": "No matching candidates yet.",
+    "shortlist": "Shortlist",
+    "interview": "Interview",
+    "offer": "Offer",
+    "accept": "Accept",
+    "reject": "Reject",
+    "applicants": "Applicants",
+    "allCandidates": "All candidates"
   },
   "common": {
     "signOut": "Sign out",
