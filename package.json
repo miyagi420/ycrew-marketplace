@@ -57,7 +57,13 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "web:build": "expo export --platform web",
+    "db:push": "supabase db push",
+    "functions:deploy": "supabase functions deploy match-crew-to-job account",
+    "deploy:supabase": "supabase db push && supabase functions deploy match-crew-to-job account",
+    "build:android": "eas build -p android --profile preview",
+    "build:ios": "eas build -p ios --profile preview"
   },
   "private": true
 }
