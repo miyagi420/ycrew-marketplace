@@ -23,7 +23,7 @@ export default function PaymentSuccess() {
       </View>
 
       <View className="border-y border-slate-200 px-8">
-        <ReceiptRow left="To" right="YachtCrew Escrow" />
+        <ReceiptRow left="To" right="Yachtly Escrow" />
         <ReceiptRow left="From" right="Adv SafeBalance Banking - 7118" />
         <ReceiptRow left="Amount" right="$300.00" />
         <ReceiptRow left="Date" right="Jun 1, 2026" />

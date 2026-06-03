@@ -31,7 +31,7 @@ export default function Account() {
       const href = g.URL.createObjectURL(blob);
       const a = g.document.createElement('a');
       a.href = href;
-      a.download = 'my-yachtcrew-data.json';
+      a.download = 'my-yachtly-data.json';
       a.click();
       g.URL.revokeObjectURL(href);
     }
@@ -73,7 +73,7 @@ export default function Account() {
         />
         <InfoRow icon="i" title="Term & Conditions" onPress={() => router.push('/legal/terms')} />
         <InfoRow icon="i" title="Privacy Policy" onPress={() => router.push('/legal/privacy')} />
-        <InfoRow icon="✉" title="Contact Us" subtitle="hello@yachtcrew.test" />
+        <InfoRow icon="✉" title="Contact Us" subtitle="hello@yachtly.test" />
         <InfoRow icon="⇩" title="Data Export" subtitle="download your account data" onPress={exportData} />
 
         <View className="mt-6 items-center px-8">

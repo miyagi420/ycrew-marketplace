@@ -29,7 +29,7 @@ const mapStyle = [
 declare global {
   interface Window {
     google?: any;
-    __yachtCrewGoogleMapsLoading?: Promise<void>;
+    __yachtlyGoogleMapsLoading?: Promise<void>;
   }
 }
 
@@ -170,9 +170,9 @@ function FallbackVoyageMap({ points, selectedId, onSelect, height, audience }: V
 function loadGoogleMaps() {
   if (typeof window === 'undefined') return Promise.resolve();
   if (window.google?.maps) return Promise.resolve();
-  if (window.__yachtCrewGoogleMapsLoading) return window.__yachtCrewGoogleMapsLoading;
+  if (window.__yachtlyGoogleMapsLoading) return window.__yachtlyGoogleMapsLoading;
 
-  window.__yachtCrewGoogleMapsLoading = new Promise((resolve, reject) => {
+  window.__yachtlyGoogleMapsLoading = new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}`;
     script.async = true;
@@ -182,7 +182,7 @@ function loadGoogleMaps() {
     document.head.appendChild(script);
   });
 
-  return window.__yachtCrewGoogleMapsLoading;
+  return window.__yachtlyGoogleMapsLoading;
 }
 
 function centerOf(points: MapPoint[]) {

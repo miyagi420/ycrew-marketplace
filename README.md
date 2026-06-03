@@ -1,12 +1,12 @@
-# YachtCrew — Yacht Crew Marketplace
+# Yachtly — Yacht Crew Marketplace
 
 A two-sided marketplace connecting yacht/maritime employers with crew. Crew
 build verified profiles and apply to jobs; owners post jobs and review ranked
 candidates; both sides chat in realtime. Cross-platform: **iOS, Android, and
 web** from one Expo codebase, backed by Supabase.
 
-> `YachtCrew` is a working title — pick a trademark-clear brand before store
-> submission.
+> **Yachtly** is the app name. Run a trademark + App Store / Play Store name
+> check before publishing to confirm it's clear in your markets.
 
 ## Stack
 

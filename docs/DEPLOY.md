@@ -112,7 +112,7 @@ vercel --prod
 When you're ready to publish:
 
 1. **Choose the real app name** (trademark-clear) and set `name` in `app.json`
-   (bundle id `com.ycrew.app` is already set — change if needed).
+   (bundle id `com.yachtly.app` is already set — change if needed).
 2. Apple Developer ($99/yr) + Google Play ($25). Start Apple early (identity
    review is slow).
 3. Production builds + submit:

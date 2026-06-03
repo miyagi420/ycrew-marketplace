@@ -14,7 +14,7 @@ Two separate Google things, both needed eventually:
 1. Go to <https://console.cloud.google.com> and sign in (any Google account;
    no charge until you exceed the generous free tier, but a billing account is
    required — Maps gives a large monthly free credit).
-2. **Create a project** (e.g. "YachtCrew").
+2. **Create a project** (e.g. "Yachtly").
 3. **APIs & Services → Library** → enable:
    - **Maps JavaScript API** — the only API the web app needs.
    - **Maps SDK for Android** — only when you ship native Android maps (later).
@@ -26,7 +26,7 @@ Two separate Google things, both needed eventually:
      plus your final domain.
    - *API restrictions* → restrict to the APIs you enabled above.
    - For a separate **Android** key later: *Application restrictions* → Android
-     apps → add package `com.ycrew.app` + your signing SHA-1.
+     apps → add package `com.yachtly.app` + your signing SHA-1.
 
 ### Use the key
 
@@ -113,7 +113,7 @@ offline chart. To enable real maps in the Android app:
 2. Add to `app.json`:
    ```json
    "android": {
-     "package": "com.ycrew.app",
+     "package": "com.yachtly.app",
      "config": { "googleMaps": { "apiKey": "YOUR_ANDROID_MAPS_KEY" } }
    }
    ```
