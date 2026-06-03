@@ -16,9 +16,9 @@ Two separate Google things, both needed eventually:
    required — Maps gives a large monthly free credit).
 2. **Create a project** (e.g. "YachtCrew").
 3. **APIs & Services → Library** → enable:
-   - **Maps JavaScript API** (for the web app — required now)
-   - **Places API** (the map script requests `libraries=places`)
-   - **Maps SDK for Android** (only when you ship native Android maps — later)
+   - **Maps JavaScript API** — the only API the web app needs.
+   - **Maps SDK for Android** — only when you ship native Android maps (later).
+   - (Places, Roads, Directions, Geocoding are **not** used — skip them.)
 4. **APIs & Services → Credentials → Create credentials → API key.** Copy it.
 5. **Restrict the key** (important — the key ships in the web bundle):
    - *Application restrictions* → **HTTP referrers** → add your domains, e.g.
