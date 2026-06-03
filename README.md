@@ -1,12 +1,12 @@
-# YachtCrew — Yacht Crew Marketplace
+# Yachtly — Yacht Crew Marketplace
 
 A two-sided marketplace connecting yacht/maritime employers with crew. Crew
 build verified profiles and apply to jobs; owners post jobs and review ranked
 candidates; both sides chat in realtime. Cross-platform: **iOS, Android, and
 web** from one Expo codebase, backed by Supabase.
 
-> `YachtCrew` is a working title — pick a trademark-clear brand before store
-> submission.
+> **Yachtly** is the app name. Run a trademark + App Store / Play Store name
+> check before publishing to confirm it's clear in your markets.
 
 ## Stack
 
@@ -44,6 +44,21 @@ Run on a device: `npm run ios` / `npm run android` (Expo).
 | `npm run web:build` | Export the web build to `dist/` |
 | `npm run db:push` / `functions:deploy` | Push schema / deploy edge functions to cloud |
 | `npm run build:android` / `build:ios` | EAS native builds |
+
+## Maps and locations
+
+Set `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` to render Google Maps on web. Restrict
+the key to your production domains in Google Cloud. Without the key, the app
+uses an offline chart-style fallback.
+
+Location data is stored in Supabase:
+
+- `job_locations`: public coordinates for open crew offers.
+- `vessel_positions`: latest vessel positions for owned/open-job vessels.
+- `crew_locations`: crew opt-in locations; owners only see shared rows.
+
+Set `EXPO_PUBLIC_USE_MATCH_EDGE_FUNCTIONS=true` in production; local builds use
+the client scorer unless you also run the Supabase Edge Function runtime.
 
 ## Deploying / trying it beyond local
 

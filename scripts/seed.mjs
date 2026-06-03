@@ -129,6 +129,33 @@ async function main() {
   assert('owner created org via RPC', !!org?.id);
   assert('owner posted a job', !!job?.id);
 
+  // --- Demo map data (so the voyage map shows real points) ---
+  await owner.from('job_locations').upsert({
+    job_id: job.id,
+    label: 'Palma, Spain',
+    country: 'Spain',
+    lat: 39.5696,
+    lng: 2.6502,
+    source: 'owner-entry',
+  });
+  await owner.from('vessel_positions').upsert({
+    vessel_id: vessel.id,
+    job_id: job.id,
+    label: 'MY Serenity',
+    lat: 39.45,
+    lng: 2.7,
+    speed_knots: 0,
+    source: 'manual',
+  });
+  await crew.from('crew_locations').upsert({
+    crew_user_id: crewId,
+    label: 'Antibes, France',
+    country: 'France',
+    lat: 43.5808,
+    lng: 7.1251,
+    share_with_owners: true,
+  });
+
   // --- RLS assertions ---
   // Crew sees the OPEN job, not the DRAFT.
   const { data: crewJobs } = await crew.from('jobs').select('id, status');

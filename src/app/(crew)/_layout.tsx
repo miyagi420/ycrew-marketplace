@@ -7,8 +7,8 @@ export default function CrewLayout() {
   const { session, loading } = useAuth();
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-navy-900">
-        <ActivityIndicator color="#DBBC76" />
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator color="#1E3A8A" />
       </View>
     );
   }

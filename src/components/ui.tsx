@@ -17,17 +17,17 @@ export function Screen({ children, scroll = true }: { children: ReactNode; scrol
   const pad = { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 };
   if (!scroll) {
     return (
-      <View className="flex-1 bg-navy-900 px-5" style={pad}>
+      <View className="flex-1 bg-[#F7F4ED] px-5" style={pad}>
         {children}
       </View>
     );
   }
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-navy-900"
+      className="flex-1 bg-[#F7F4ED]"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView
-        className="flex-1 bg-navy-900"
+        className="flex-1 bg-[#F7F4ED]"
         contentContainerStyle={{ paddingHorizontal: 20, ...pad }}
         keyboardShouldPersistTaps="handled">
         {children}
@@ -37,15 +37,15 @@ export function Screen({ children, scroll = true }: { children: ReactNode; scrol
 }
 
 export function H1({ children }: { children: ReactNode }) {
-  return <Text className="mb-1 text-3xl font-semibold text-white">{children}</Text>;
+  return <Text className="mb-1 text-4xl font-semibold leading-tight text-[#162B3A]">{children}</Text>;
 }
 
 export function Subtle({ children }: { children: ReactNode }) {
-  return <Text className="mb-6 text-base text-navy-100">{children}</Text>;
+  return <Text className="mb-6 text-base leading-relaxed text-[#5C6E7A]">{children}</Text>;
 }
 
 export function Label({ children }: { children: ReactNode }) {
-  return <Text className="mb-1.5 text-xs uppercase tracking-wide text-gold-300">{children}</Text>;
+  return <Text className="mb-1.5 text-xs uppercase text-[#5C6E7A]">{children}</Text>;
 }
 
 export function Field({ label, ...props }: { label: string } & TextInputProps) {
@@ -53,8 +53,8 @@ export function Field({ label, ...props }: { label: string } & TextInputProps) {
     <View className="mb-4">
       <Label>{label}</Label>
       <TextInput
-        placeholderTextColor="#4F6A8E"
-        className="rounded-xl border border-navy-500/40 bg-navy-800 px-4 py-3 text-base text-white"
+        placeholderTextColor="#94A3B8"
+        className="rounded-2xl border border-[#D9CFC0] bg-[#FFFDF8] px-4 py-3 text-base text-[#162B3A]"
         {...props}
       />
     </View>
@@ -83,12 +83,12 @@ export function Button({
       onPress={onPress}
       disabled={disabled || loading}
       className={`mb-3 items-center rounded-2xl py-4 active:opacity-80 ${
-        primary ? 'bg-gold-400' : 'border border-gold-400/40'
+        primary ? 'bg-[#0F766E]' : 'border border-[#0F766E]/40 bg-[#FFFDF8]'
       } ${disabled || loading ? 'opacity-50' : ''}`}>
       {loading ? (
-        <ActivityIndicator color={primary ? '#0A1A2F' : '#DBBC76'} />
+        <ActivityIndicator color={primary ? '#FFFFFF' : '#0F766E'} />
       ) : (
-        <Text className={`text-base font-semibold ${primary ? 'text-navy-900' : 'text-gold-200'}`}>
+        <Text className={`text-base font-semibold ${primary ? 'text-white' : 'text-[#0F766E]'}`}>
           {title}
         </Text>
       )}
@@ -98,15 +98,15 @@ export function Button({
 
 export function Card({ children }: { children: ReactNode }) {
   return (
-    <View className="mb-3 rounded-2xl border border-navy-500/30 bg-navy-800 p-4">{children}</View>
+    <View className="mb-3 rounded-3xl border border-[#E7DED1] bg-[#FFFDF8] p-4 shadow-sm">{children}</View>
   );
 }
 
 export function Pill({ children, tone = 'gold' }: { children: ReactNode; tone?: 'gold' | 'green' | 'muted' }) {
   const tones = {
-    gold: 'bg-gold-400/15 text-gold-200',
-    green: 'bg-emerald-500/15 text-emerald-300',
-    muted: 'bg-white/10 text-navy-100',
+    gold: 'bg-[#FFE8D8] text-[#B45125]',
+    green: 'bg-emerald-100 text-emerald-700',
+    muted: 'bg-slate-100 text-slate-600',
   } as const;
   return (
     <View className={`self-start rounded-full px-2.5 py-1 ${tones[tone].split(' ')[0]}`}>
@@ -117,5 +117,5 @@ export function Pill({ children, tone = 'gold' }: { children: ReactNode; tone?: 
 
 export function ErrorText({ children }: { children: ReactNode }) {
   if (!children) return null;
-  return <Text className="mb-3 text-sm text-red-400">{children}</Text>;
+  return <Text className="mb-3 text-sm text-red-600">{children}</Text>;
 }

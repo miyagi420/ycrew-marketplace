@@ -5,6 +5,7 @@ import { Pressable, Text } from 'react-native';
 
 import { Button, ErrorText, Field, H1, Screen } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { buildLocationDraft, upsertJobLocation } from '@/lib/locations';
 import { supabase } from '@/lib/supabase';
 
 const csv = (s: string) =>
@@ -25,6 +26,9 @@ export default function PostJob() {
   const [minExp, setMinExp] = useState('');
   const [dayRate, setDayRate] = useState('');
   const [certs, setCerts] = useState('');
+  const [locationLabel, setLocationLabel] = useState('');
+  const [locationLat, setLocationLat] = useState('');
+  const [locationLng, setLocationLng] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -59,7 +63,7 @@ export default function PostJob() {
       setBusy(false);
       return;
     }
-    const { error } = await supabase.from('jobs').insert({
+    const { data: job, error } = await supabase.from('jobs').insert({
       owner_org_id: orgId,
       title: title.trim(),
       role: role.trim(),
@@ -70,11 +74,15 @@ export default function PostJob() {
       requires_cert_types: csv(certs),
       status: publish ? 'OPEN' : 'DRAFT',
       posted_at: publish ? new Date().toISOString() : null,
-    });
+    }).select('id').single();
     setBusy(false);
     if (error) {
       setError(error.message);
       return;
+    }
+    if (job?.id) {
+      const draft = buildLocationDraft(locationLabel, locationLat, locationLng, title || role || uid);
+      await upsertJobLocation(job.id, draft);
     }
     router.replace('/(owner)');
   };
@@ -82,10 +90,12 @@ export default function PostJob() {
   return (
     <Screen>
       <Pressable onPress={() => router.back()} className="mb-2 mt-2">
-        <Text className="text-sm text-gold-300">‹ {t('common.back')}</Text>
+        <Text className="text-sm text-blue-800">‹ {t('common.back')}</Text>
       </Pressable>
       <H1>{t('owner.postJob')}</H1>
-      <Text className="mb-5 text-sm text-navy-100">{t('landing.subtitle')}</Text>
+      <Text className="mb-5 text-sm text-slate-600">
+        Tell crew where you are heading, what help you need, and when you sail.
+      </Text>
 
       <Field testID="job-title" label={t('owner.jobTitle')} value={title} onChangeText={setTitle} />
       <Field testID="job-role" label={t('owner.role')} value={role} onChangeText={setRole} />
@@ -100,6 +110,13 @@ export default function PostJob() {
       <Field label={t('owner.minExp')} value={minExp} onChangeText={setMinExp} keyboardType="number-pad" />
       <Field label={t('owner.dayRate')} value={dayRate} onChangeText={setDayRate} keyboardType="decimal-pad" />
       <Field label={t('owner.requiresCerts')} value={certs} onChangeText={setCerts} autoCapitalize="characters" />
+      <Text className="mb-2 mt-2 text-xs uppercase text-slate-600">Map location</Text>
+      <Field label="Port or vessel area" value={locationLabel} onChangeText={setLocationLabel} placeholder="Palma, Spain" />
+      <Text className="mb-3 text-sm text-slate-500">
+        Add coordinates to place the offer on Google Maps. If blank, a demo port is used.
+      </Text>
+      <Field label="Latitude" value={locationLat} onChangeText={setLocationLat} keyboardType="decimal-pad" />
+      <Field label="Longitude" value={locationLng} onChangeText={setLocationLng} keyboardType="decimal-pad" />
 
       <ErrorText>{error}</ErrorText>
       <Button testID="publish" title={t('owner.publishNow')} onPress={() => submit(true)} loading={busy} />

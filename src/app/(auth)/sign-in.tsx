@@ -51,7 +51,7 @@ export default function SignIn() {
         <ErrorText>{error}</ErrorText>
         <Button title={t('auth.doSignIn')} onPress={onSubmit} loading={busy} />
 
-        <Link href="/(auth)/sign-up" className="mt-2 text-center text-sm text-gold-300">
+        <Link href="/(auth)/sign-up" className="mt-2 text-center text-sm text-blue-800">
           {t('auth.noAccount')}
         </Link>
       </View>

@@ -1,19 +1,19 @@
 {
   "expo": {
-    "name": "YachtCrew",
-    "slug": "yacht-crew-app",
+    "name": "Yachtly",
+    "slug": "yachtly-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "yachtcrew",
+    "scheme": "yachtly",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
       "supportsTablet": true,
-      "bundleIdentifier": "com.ycrew.app"
+      "bundleIdentifier": "com.yachtly.app"
     },
     "android": {
-      "package": "com.ycrew.app",
+      "package": "com.yachtly.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

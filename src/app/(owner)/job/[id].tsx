@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,29 +8,29 @@ import { type Candidate, getCandidatesForJob } from '@/lib/match-service';
 import { matchTier } from '@/lib/matching';
 import { supabase } from '@/lib/supabase';
 
-type Action = { labelKey: string; status: string };
+type Action = { label: string; status: string };
 
 function nextActions(status: string): Action[] {
   switch (status) {
     case 'APPLIED':
       return [
-        { labelKey: 'owner.shortlist', status: 'SHORTLISTED' },
-        { labelKey: 'owner.reject', status: 'REJECTED' },
+        { label: 'Shortlist', status: 'SHORTLISTED' },
+        { label: 'Reject', status: 'REJECTED' },
       ];
     case 'SHORTLISTED':
       return [
-        { labelKey: 'owner.interview', status: 'INTERVIEW' },
-        { labelKey: 'owner.reject', status: 'REJECTED' },
+        { label: 'Interview', status: 'INTERVIEW' },
+        { label: 'Reject', status: 'REJECTED' },
       ];
     case 'INTERVIEW':
       return [
-        { labelKey: 'owner.offer', status: 'OFFER' },
-        { labelKey: 'owner.reject', status: 'REJECTED' },
+        { label: 'Offer', status: 'OFFER' },
+        { label: 'Reject', status: 'REJECTED' },
       ];
     case 'OFFER':
       return [
-        { labelKey: 'owner.accept', status: 'ACCEPTED' },
-        { labelKey: 'owner.reject', status: 'REJECTED' },
+        { label: 'Accept', status: 'ACCEPTED' },
+        { label: 'Reject', status: 'REJECTED' },
       ];
     default:
       return [];
@@ -39,7 +38,6 @@ function nextActions(status: string): Action[] {
 }
 
 export default function JobCandidates() {
-  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -48,19 +46,17 @@ export default function JobCandidates() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
-    setLoading(true);
-    const [{ data: job }, cands] = await Promise.all([
-      supabase.from('jobs').select('title').eq('id', id).maybeSingle(),
-      getCandidatesForJob(id),
-    ]);
-    setJobTitle(job?.title ?? '');
-    setCandidates(cands);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    load();
+    (async () => {
+      setLoading(true);
+      const [{ data: job }, cands] = await Promise.all([
+        supabase.from('jobs').select('title').eq('id', id).maybeSingle(),
+        getCandidatesForJob(id),
+      ]);
+      setJobTitle(job?.title ?? '');
+      setCandidates(cands);
+      setLoading(false);
+    })();
   }, [id]);
 
   const setStatus = async (userId: string, status: string) => {
@@ -83,8 +79,8 @@ export default function JobCandidates() {
     <Card key={c.userId}>
       <View className="mb-2 flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="text-lg font-semibold text-white">{c.name}</Text>
-          <Text className="text-sm text-navy-100">{c.role}</Text>
+          <Text className="text-lg font-semibold text-slate-950">{c.name}</Text>
+          <Text className="text-sm text-slate-500">{c.role}</Text>
         </View>
         <View className="items-end gap-1">
           <Pill tone={c.score >= 75 ? 'green' : 'gold'}>
@@ -94,12 +90,12 @@ export default function JobCandidates() {
         </View>
       </View>
       {c.reasons.slice(0, 3).map((r) => (
-        <Text key={r} className="text-xs text-navy-100">
-          • {r}
+        <Text key={r} className="text-xs text-slate-600">
+          - {r}
         </Text>
       ))}
       <Pressable onPress={() => router.push(`/chat/${c.userId}`)} className="mt-3 self-start">
-        <Text className="text-sm text-gold-300">{t('common.message')} ›</Text>
+        <Text className="text-sm text-blue-800">Message {'>'}</Text>
       </Pressable>
       {withActions && c.appliedStatus ? (
         <View className="mt-3 flex-row flex-wrap gap-2">
@@ -108,13 +104,10 @@ export default function JobCandidates() {
               key={a.status}
               onPress={() => setStatus(c.userId, a.status)}
               className={`rounded-xl px-3 py-2 ${
-                a.status === 'REJECTED' ? 'border border-red-400/40' : 'bg-gold-400'
+                a.status === 'REJECTED' ? 'border border-red-400/40' : 'bg-blue-800'
               }`}>
-              <Text
-                className={`text-sm font-semibold ${
-                  a.status === 'REJECTED' ? 'text-red-300' : 'text-navy-900'
-                }`}>
-                {t(a.labelKey)}
+              <Text className={`text-sm font-semibold ${a.status === 'REJECTED' ? 'text-red-600' : 'text-white'}`}>
+                {a.label}
               </Text>
             </Pressable>
           ))}
@@ -124,30 +117,28 @@ export default function JobCandidates() {
   );
 
   return (
-    <View className="flex-1 bg-navy-900" style={{ paddingTop: insets.top + 12 }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top + 12 }}>
       <View className="px-5 pb-3">
         <Pressable onPress={() => router.back()} className="mb-2">
-          <Text className="text-sm text-gold-300">‹ {t('common.back')}</Text>
+          <Text className="text-sm text-blue-800">‹ Back</Text>
         </Pressable>
-        <Text className="text-2xl font-semibold text-white">{t('owner.candidates')}</Text>
-        <Text className="text-sm text-navy-100">{jobTitle}</Text>
+        <Text className="text-2xl font-semibold text-slate-950">Candidates</Text>
+        <Text className="text-sm text-slate-500">{jobTitle}</Text>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: insets.bottom + 24 }}>
         {applicants.length > 0 ? (
           <>
-            <Text className="mb-2 text-xs uppercase tracking-wide text-gold-300">
-              {t('owner.applicants')} ({applicants.length})
+            <Text className="mb-2 text-xs uppercase text-slate-600">
+              Applicants ({applicants.length})
             </Text>
             {applicants.map((c) => renderCard(c, true))}
           </>
         ) : null}
 
-        <Text className="mb-2 mt-4 text-xs uppercase tracking-wide text-gold-300">
-          {t('owner.allCandidates')}
-        </Text>
+        <Text className="mb-2 mt-4 text-xs uppercase text-slate-600">All candidates</Text>
         {others.length === 0 && !loading ? (
-          <Text className="mt-4 text-center text-navy-100">{t('owner.noCandidates')}</Text>
+          <Text className="mt-4 text-center text-slate-500">No candidates yet.</Text>
         ) : null}
         {others.map((c) => renderCard(c, false))}
       </ScrollView>

@@ -1,25 +1,22 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, Text, View } from 'react-native';
 
-import { Button, Card, ErrorText, H1, Pill, Screen } from '@/components/ui';
+import { FriendlyPage, InfoRow, PageHeader } from '@/components/friendly';
+import { ErrorText } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
 export default function Account() {
-  const { t } = useTranslation();
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, role } = useAuth();
 
   const [busy, setBusy] = useState(false);
-  const [exported, setExported] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const exportData = async () => {
     setError(null);
-    setExported(false);
     setBusy(true);
     const { data, error } = await supabase.functions.invoke('account', { body: { action: 'export' } });
     setBusy(false);
@@ -34,11 +31,10 @@ export default function Account() {
       const href = g.URL.createObjectURL(blob);
       const a = g.document.createElement('a');
       a.href = href;
-      a.download = 'my-yachtcrew-data.json';
+      a.download = 'my-yachtly-data.json';
       a.click();
       g.URL.revokeObjectURL(href);
     }
-    setExported(true);
   };
 
   const deleteAccount = async () => {
@@ -58,48 +54,46 @@ export default function Account() {
   };
 
   return (
-    <Screen>
-      <Pressable onPress={() => router.back()} className="mb-2 mt-2">
-        <Text className="text-sm text-gold-300">‹ {t('common.back')}</Text>
-      </Pressable>
-      <H1>{t('account.title')}</H1>
-      <View className="h-4" />
+    <FriendlyPage activeTab="account">
+      <PageHeader title="More" />
+      <View className="flex-1 bg-white pt-10">
+        <InfoRow
+          icon="♙"
+          title="My Profile"
+          subtitle="edit your profile"
+          onPress={() => router.push(role === 'CREW' ? '/(crew)/profile' : '/(owner)')}
+        />
+        <InfoRow icon="♙" title="ID Verification" subtitle="verify your identity" badge />
+        <InfoRow icon="⛵" title="My Boats" subtitle="manage your boats" onPress={() => router.push('/(owner)/post-job')} />
+        <InfoRow
+          icon="▭"
+          title="Payment Methods"
+          subtitle="manage your payment methods"
+          onPress={() => router.push('/payment-success')}
+        />
+        <InfoRow icon="i" title="Term & Conditions" onPress={() => router.push('/legal/terms')} />
+        <InfoRow icon="i" title="Privacy Policy" onPress={() => router.push('/legal/privacy')} />
+        <InfoRow icon="✉" title="Contact Us" subtitle="hello@yachtly.test" />
+        <InfoRow icon="⇩" title="Data Export" subtitle="download your account data" onPress={exportData} />
 
-      <Card>
-        <Text className="mb-1 text-base font-semibold text-white">{t('account.exportData')}</Text>
-        <Text className="mb-3 text-sm text-navy-100">{t('account.exportDesc')}</Text>
-        {exported ? (
-          <View className="mb-3">
-            <Pill tone="green">{t('account.exported')}</Pill>
-          </View>
-        ) : null}
-        <Button title={t('account.exportData')} variant="outline" onPress={exportData} loading={busy} />
-      </Card>
-
-      <Card>
-        <Text className="mb-1 text-base font-semibold text-white">{t('account.deleteAccount')}</Text>
-        <Text className="mb-3 text-sm text-navy-100">{t('account.deleteDesc')}</Text>
-        <ErrorText>{error}</ErrorText>
-        <Pressable
-          onPress={deleteAccount}
-          disabled={busy}
-          className={`items-center rounded-2xl border py-4 ${
-            confirming ? 'border-red-400 bg-red-500/15' : 'border-red-400/40'
-          }`}>
-          <Text className="text-base font-semibold text-red-300">
-            {confirming ? t('account.confirmDelete') : t('account.deleteAccount')}
-          </Text>
-        </Pressable>
-      </Card>
-
-      <View className="mt-4 flex-row justify-center gap-4">
-        <Pressable onPress={() => router.push('/legal/privacy')}>
-          <Text className="text-sm text-gold-300">{t('legal.privacy')}</Text>
-        </Pressable>
-        <Pressable onPress={() => router.push('/legal/terms')}>
-          <Text className="text-sm text-gold-300">{t('legal.terms')}</Text>
-        </Pressable>
+        <View className="mt-6 items-center px-8">
+          <ErrorText>{error}</ErrorText>
+          <Pressable
+            disabled={busy}
+            onPress={async () => {
+              await signOut();
+              router.replace('/');
+            }}
+            className="rounded-xl bg-indigo-100 px-14 py-4">
+            <Text className="text-xl text-slate-950">Log Out</Text>
+          </Pressable>
+          <Pressable disabled={busy} onPress={deleteAccount} className="mt-10">
+            <Text className="text-xl text-red-200">
+              {confirming ? 'Tap again to delete' : 'Delete Account'}
+            </Text>
+          </Pressable>
+        </View>
       </View>
-    </Screen>
+    </FriendlyPage>
   );
 }
