@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -24,7 +23,6 @@ type Message = {
 };
 
 export default function Chat() {
-  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { session } = useAuth();
@@ -76,13 +74,13 @@ export default function Chat() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-navy-900"
+      className="flex-1 bg-white"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View style={{ paddingTop: insets.top + 12 }} className="px-5 pb-3">
+      <View style={{ paddingTop: insets.top + 12 }} className="border-b border-slate-100 px-5 pb-3">
         <Pressable onPress={() => router.back()} className="mb-2">
-          <Text className="text-sm text-gold-300">‹ {t('common.back')}</Text>
+          <Text className="text-sm text-blue-800">‹ Back</Text>
         </Pressable>
-        <Text className="text-2xl font-semibold text-white">{t('chat.title')}</Text>
+        <Text className="text-3xl font-normal text-slate-950">Messages</Text>
       </View>
 
       <ScrollView
@@ -91,7 +89,9 @@ export default function Chat() {
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
         onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}>
         {messages.length === 0 ? (
-          <Text className="mt-10 text-center text-navy-100">{t('chat.empty')}</Text>
+          <Text className="mt-10 text-center text-slate-500">
+            Start with a quick hello about dates, role fit or sea time.
+          </Text>
         ) : null}
         {messages.map((m) => {
           const mine = m.sender_id === me;
@@ -99,9 +99,9 @@ export default function Chat() {
             <View
               key={m.id}
               className={`my-1 max-w-[80%] rounded-2xl px-4 py-2 ${
-                mine ? 'self-end bg-gold-400' : 'self-start bg-navy-700'
+                mine ? 'self-end bg-blue-800' : 'self-start bg-slate-100'
               }`}>
-              <Text className={mine ? 'text-navy-900' : 'text-white'}>{m.body}</Text>
+              <Text className={mine ? 'text-white' : 'text-slate-950'}>{m.body}</Text>
             </View>
           );
         })}
@@ -109,21 +109,18 @@ export default function Chat() {
 
       <View
         style={{ paddingBottom: insets.bottom + 8 }}
-        className="flex-row items-center gap-2 border-t border-navy-700 px-3 pt-3">
+        className="flex-row items-center gap-2 border-t border-slate-200 px-3 pt-3">
         <TextInput
           testID="chat-input"
           value={text}
           onChangeText={setText}
-          placeholder={t('chat.placeholder')}
-          placeholderTextColor="#4F6A8E"
+          placeholder="Write a message"
+          placeholderTextColor="#64748B"
           onSubmitEditing={send}
-          className="flex-1 rounded-2xl border border-navy-500/40 bg-navy-800 px-4 py-3 text-white"
+          className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-950"
         />
-        <Pressable
-          testID="chat-send"
-          onPress={send}
-          className="rounded-2xl bg-gold-400 px-4 py-3">
-          <Text className="font-semibold text-navy-900">{t('chat.send')}</Text>
+        <Pressable testID="chat-send" onPress={send} className="rounded-2xl bg-blue-800 px-4 py-3">
+          <Text className="font-semibold text-white">Send</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>

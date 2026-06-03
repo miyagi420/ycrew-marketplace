@@ -15,6 +15,9 @@ test('owner posts a job and a crew member applies', async ({ page }) => {
   const jobTitle = `E2E Deckhand ${stamp}`;
 
   const fillSignup = async (name: string, email: string) => {
+    for (let i = 0; i < 4; i += 1) {
+      await tid('onboarding-next').click();
+    }
     await tid('name').fill(name);
     await tid('email').fill(email);
     await tid('password').fill('Passw0rd!');
