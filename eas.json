@@ -16,7 +16,9 @@
       },
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://YOUR-PROJECT-REF.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR-PUBLISHABLE-OR-ANON-KEY"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR-PUBLISHABLE-OR-ANON-KEY",
+        "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "YOUR-GOOGLE-MAPS-KEY",
+        "EXPO_PUBLIC_USE_MATCH_EDGE_FUNCTIONS": "true"
       }
     },
     "production": {
@@ -24,7 +26,9 @@
       "channel": "production",
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://YOUR-PROJECT-REF.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR-PUBLISHABLE-OR-ANON-KEY"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR-PUBLISHABLE-OR-ANON-KEY",
+        "EXPO_PUBLIC_GOOGLE_MAPS_API_KEY": "YOUR-GOOGLE-MAPS-KEY",
+        "EXPO_PUBLIC_USE_MATCH_EDGE_FUNCTIONS": "true"
       }
     }
   },
