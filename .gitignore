@@ -47,3 +47,6 @@ blob-report/
 
 # misc
 *.log
+
+# design reference screenshots (not app assets)
+sample images/

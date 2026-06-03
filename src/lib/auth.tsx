@@ -14,6 +14,7 @@ interface AuthContextValue {
     password: string,
     role: AppRole,
     name: string,
+    extra?: Record<string, unknown>,
   ) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -41,11 +42,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signUp: AuthContextValue['signUp'] = async (email, password, role, name) => {
+  const signUp: AuthContextValue['signUp'] = async (email, password, role, name, extra) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { role, name } },
+      options: { data: { role, name, ...(extra ?? {}) } },
     });
     return { error: error?.message ?? null };
   };
